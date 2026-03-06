@@ -14,7 +14,7 @@ This chart is designed with three core principles:
 
 1. **Minimal Resource Footprint** - Optimized to run on small cloud instances (2 vCPU, 2GB RAM). Tested on Zeabur and similar constrained environments.
 
-2. **Decoupled Browser Architecture** - We exclude the Chromium sidecar container. Browser capabilities should be decoupled from the gateway. For browser automation, we recommend using [agent-browser](https://github.com/aws-samples/agent-browser) with Amazon Bedrock AgentCore Browser Tool.
+2. **Decoupled Browser Architecture** - We exclude the Chromium sidecar container. Browser capabilities should be decoupled from the gateway. For browser automation, we recommend using Vercel [agent-browser](https://github.com/vercel-labs/agent-browser) with [Amazon Bedrock AgentCore Browser](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/browser-tool.html).
 
 3. **Security by Design** - The gateway binds to loopback (127.0.0.1) even in Kubernetes environments. This ensures the gateway is only accessible through Kubernetes Service boundaries, not directly exposed on all network interfaces.
 
