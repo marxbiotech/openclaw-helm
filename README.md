@@ -21,7 +21,7 @@ This chart is designed with three core principles:
 ## Uninstall
 
 ```bash
-helm uninstall openclaw-custom
+helm uninstall openclaw
 ```
 
 ## Configuration
