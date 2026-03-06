@@ -64,8 +64,6 @@ spec:
         - dist/index.js
         args:
         - gateway
-        - --bind
-        - lan
         - --port
         - "18789"
         ports:
