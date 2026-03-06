@@ -5,7 +5,7 @@ A slim Helm chart for OpenClaw designed without Chromium browser integration. Th
 ## Install
 
 ```bash
-helm install openclaw oci://ghcr.io/thepagent/openclaw-helm --version 1.0.1
+helm install openclaw oci://ghcr.io/thepagent/openclaw-helm
 ```
 
 ## Design Philosophy
@@ -70,7 +70,7 @@ envFrom:
 Upgrade the release:
 
 ```bash
-helm upgrade openclaw oci://ghcr.io/thepagent/openclaw-helm --version 1.1.0 -f values.yaml
+helm upgrade openclaw oci://ghcr.io/thepagent/openclaw-helm -f values.yaml
 ```
 
 ### Verify Setup
