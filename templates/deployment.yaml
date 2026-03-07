@@ -22,7 +22,7 @@ spec:
         - -c
         - |
           mkdir -p /home/node/.openclaw
-          cp /config/openclaw.json /home/node/.openclaw/openclaw.json
+          [ -f /home/node/.openclaw/openclaw.json ] || cp /config/openclaw.json /home/node/.openclaw/openclaw.json
         volumeMounts:
         - name: config
           mountPath: /config
