@@ -102,12 +102,6 @@ jobs:
           git commit -m "chore: bump OpenClaw to ${{ steps.get-version.outputs.version }}"
           git tag "v${{ steps.new-version.outputs.new_version }}"
           git push && git push --tags
-      - name: Trigger release workflow
-        if: steps.check.outputs.skip != 'true' && inputs.dry_run != true
-        env:
-          GH_TOKEN: ${{ secrets.THEPAGENT_PAT }}
-        run: |
-          gh workflow run release.yml --repo ${{ github.repository }} --ref main -f tag="v${{ steps.new-version.outputs.new_version }}"
       - name: Set up Helm
         if: steps.check.outputs.skip != 'true' && inputs.dry_run != true
         uses: azure/setup-helm@v4
@@ -121,7 +115,25 @@ jobs:
       - name: Package and push chart
         if: steps.check.outputs.skip != 'true' && inputs.dry_run != true
         run: |
-          echo "Skipping chart push - will be handled by release workflow"
+          helm package .
+          helm push openclaw-helm-${{ steps.new-version.outputs.new_version }}.tgz oci://ghcr.io/${{ github.repository_owner }}
+      - name: Create GitHub Release
+        if: steps.check.outputs.skip != 'true' && inputs.dry_run != true
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.new-version.outputs.new_version }}
+          generate_release_notes: true
+          body: |
+            ## Changes
+
+            - Chart version: ${{ steps.new-version.outputs.new_version }}
+            - OpenClaw version: ${{ steps.get-version.outputs.version }}
+
+            ## Install
+
+            ```bash
+            helm install openclaw oci://ghcr.io/${{ github.repository_owner }}/openclaw-helm --version ${{ steps.new-version.outputs.new_version }}
+            ```
       - name: Dry run summary
         if: steps.check.outputs.skip != 'true' && inputs.dry_run == true
         run: |
