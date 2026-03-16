@@ -19,7 +19,7 @@ Install a specific version:
 
 ```bash
 helm install openclaw oci://ghcr.io/thepagent/openclaw-helm \
-  --version 1.3.9 \
+  --version 1.3.11 \
   -n openclaw --create-namespace
 ```
 
@@ -41,7 +41,7 @@ helm repo update
 helm install openclaw openclaw/openclaw-helm -n openclaw --create-namespace
 
 # Install a specific version
-helm install openclaw openclaw/openclaw-helm --version 1.3.9 -n openclaw --create-namespace
+helm install openclaw openclaw/openclaw-helm --version 1.3.11 -n openclaw --create-namespace
 ```
 
 Browse available versions:
