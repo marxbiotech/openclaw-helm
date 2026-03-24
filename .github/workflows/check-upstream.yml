@@ -113,6 +113,12 @@ jobs:
           git add charts/openclaw-helm/Chart.yaml charts/openclaw-helm/values.yaml
           git commit -m "chore: bump OpenClaw to ${{ steps.get-version.outputs.version }}"
           git push
+      - name: Trigger release workflow
+        if: steps.check.outputs.skip != 'true' && inputs.dry_run != true && inputs.force != true
+        env:
+          GH_TOKEN: ${{ secrets.THEPAGENT_PAT }}
+        run: |
+          gh workflow run release.yml --repo ${{ github.repository }}
       # Packaging, OCI push, GitHub Release, and gh-pages index are all handled by release.yml
       - name: Dry run summary
         if: steps.check.outputs.skip != 'true' && inputs.dry_run == true
