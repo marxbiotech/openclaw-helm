@@ -22,7 +22,42 @@ spec:
         - -c
         - |
           mkdir -p /home/node/.openclaw
-          [ -f /home/node/.openclaw/openclaw.json ] || cp /config/openclaw.json /home/node/.openclaw/openclaw.json
+          IS_FRESH=false
+          if [ ! -f /home/node/.openclaw/openclaw.json ]; then
+            cp /config/openclaw.json /home/node/.openclaw/openclaw.json
+            IS_FRESH=true
+          fi
+          # Sync gateway tokens to match OPENCLAW_GATEWAY_TOKEN (if set)
+          # - Fresh install: only set remote.token (do not persist auth.token; gateway uses env var)
+          # - Existing install: sync both auth.token + remote.token for backward compatibility
+          if [ -n "$OPENCLAW_GATEWAY_TOKEN" ]; then
+            node -e "
+              const fs = require('fs');
+              const p = '/home/node/.openclaw/openclaw.json';
+              const c = JSON.parse(fs.readFileSync(p));
+              const token = process.env.OPENCLAW_GATEWAY_TOKEN;
+              const isFresh = process.env.IS_FRESH === 'true';
+              c.gateway = c.gateway || {};
+              c.gateway.remote = c.gateway.remote || {};
+              c.gateway.remote.token = token;
+              if (!isFresh) {
+                c.gateway.auth = c.gateway.auth || {};
+                c.gateway.auth.token = token;
+              }
+              fs.writeFileSync(p, JSON.stringify(c, null, 2));
+            "
+          fi
+        env:
+        - name: OPENCLAW_GATEWAY_TOKEN
+          valueFrom:
+            secretKeyRef:
+              {{- if .Values.gateway.token.generate }}
+              name: {{ include "openclaw-helm.fullname" . }}-gateway-token
+              {{- else }}
+              name: {{ .Values.gateway.token.secretName }}
+              {{- end }}
+              key: token
+              optional: true
         volumeMounts:
         - name: config
           mountPath: /config
