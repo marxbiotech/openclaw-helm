@@ -89,3 +89,13 @@ env: {}
 #   - configMapRef:
 #       name: openclaw-config
 envFrom: []
+
+# nodeSelector constrains the pod to nodes with matching labels
+# Example: { disktype: ssd }
+nodeSelector: {}
+
+# tolerations allow scheduling onto tainted nodes
+tolerations: []
+
+# affinity defines advanced node/pod scheduling rules
+affinity: {}

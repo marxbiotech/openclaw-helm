@@ -230,6 +230,39 @@ To customize your own backup or auto-upgrade strategy, read:
 
 Share these docs with your AI agent and ask it to implement the scripts for your environment.
 
+## Pod Scheduling
+
+Use standard Kubernetes scheduling fields to control where the OpenClaw pod runs:
+
+All three fields — `nodeSelector`, `tolerations`, and `affinity` — are independent. You can use any of them individually or combine them as needed.
+
+```yaml
+nodeSelector:
+  disktype: ssd
+
+tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "openclaw"
+    effect: "NoSchedule"
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: topology.kubernetes.io/zone
+              operator: In
+              values:
+                - us-east-1a
+```
+
+Add the fields you need to your `values.yaml` and apply during install or upgrade:
+
+```bash
+helm upgrade openclaw oci://ghcr.io/thepagent/openclaw-helm -n openclaw -f values.yaml
+```
+
 ## Example: Add more skills
 
 ```yaml
