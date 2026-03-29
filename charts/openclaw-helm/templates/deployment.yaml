@@ -37,18 +37,20 @@ spec:
         - sh
         - -c
         - |
+          set -e
           mkdir -p /home/node/.openclaw
           [ -f /home/node/.openclaw/openclaw.json ] || cp /config/openclaw.json /home/node/.openclaw/openclaw.json
-          # Sync gateway.remote.token to match OPENCLAW_GATEWAY_TOKEN (if set)
-          # gateway reads auth token from env var first (env-first precedence), so auth.token in config is not needed
+          # Sync gateway.auth.token to match the Secret value (if set).
+          # The gateway process uses config-first precedence when OPENCLAW_SERVICE_KIND=gateway,
+          # so auth.token in config takes priority over the env var.
           if [ -n "$OPENCLAW_GATEWAY_TOKEN" ]; then
             node -e "
               const fs = require('fs');
               const p = '/home/node/.openclaw/openclaw.json';
               const c = JSON.parse(fs.readFileSync(p));
               c.gateway = c.gateway || {};
-              c.gateway.remote = c.gateway.remote || {};
-              c.gateway.remote.token = process.env.OPENCLAW_GATEWAY_TOKEN;
+              c.gateway.auth = c.gateway.auth || {};
+              c.gateway.auth.token = process.env.OPENCLAW_GATEWAY_TOKEN;
               fs.writeFileSync(p, JSON.stringify(c, null, 2));
             "
           fi
@@ -61,7 +63,7 @@ spec:
               {{- else }}
               name: {{ .Values.gateway.token.secretName }}
               {{- end }}
-              key: token
+              key: OPENCLAW_GATEWAY_TOKEN
               optional: true
         volumeMounts:
         - name: config
