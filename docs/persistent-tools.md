@@ -115,6 +115,14 @@ mkdir -p /home/node/.openclaw/.config/gh
 
 This ensures the OAuth token is written under the persisted `~/.openclaw` path instead of the default ephemeral `~/.config/gh`.
 
+If your OpenClaw environment automatically loads `~/.openclaw/.env`, you can make this persistent across future sessions by adding:
+
+```bash
+GH_CONFIG_DIR=/home/node/.openclaw/.config/gh
+```
+
+That way, future `gh` commands will keep using the cached token without requiring a manual `export` each time.
+
 Ask OpenClaw:
 
 > can you run like this and tell me the OTP?  
