@@ -103,7 +103,17 @@ OpenClaw will run the command, capture the one-time code and URL, and send them 
 
 ### GitHub CLI example (`gh auth login`)
 
-A concrete example for GitHub CLI when you can only interact with the OpenClaw agent inside the Pod:
+A concrete example for GitHub CLI when you can only interact with the OpenClaw agent inside the Pod. In addition to persisting the `gh` binary under `~/.openclaw/workspace/bin/gh`, you should also persist the GitHub CLI config/auth directory.
+
+Before running `gh auth login`, use:
+
+```bash
+export PATH=/home/node/.openclaw/workspace/bin:$PATH
+export GH_CONFIG_DIR=/home/node/.openclaw/.config/gh
+mkdir -p /home/node/.openclaw/.config/gh
+```
+
+This ensures the OAuth token is written under the persisted `~/.openclaw` path instead of the default ephemeral `~/.config/gh`.
 
 Ask OpenClaw:
 
