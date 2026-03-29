@@ -98,7 +98,24 @@ spec:
           mountPath: /home/node/.openclaw
         - name: tmp
           mountPath: /tmp
-      
+
+      {{- if .Values.plugins }}
+      - name: init-plugins
+        image: "{{ include "openclaw-helm.image" . }}"
+        command:
+        - sh
+        - -c
+        - |
+          {{- range .Values.plugins }}
+          if [ ! -d "/home/node/.openclaw/extensions/{{ . }}" ]; then
+            node dist/index.js plugins install "clawhub:{{ . }}" || echo "[WARN] Failed to install plugin: {{ . }}"
+          fi
+          {{- end }}
+        volumeMounts:
+        - name: data
+          mountPath: /home/node/.openclaw
+      {{- end }}
+
       containers:
       - name: main
         image: "{{ include "openclaw-helm.image" . }}"

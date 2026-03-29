@@ -88,6 +88,8 @@ skills:
   - weather
   - gog
 
+plugins: []
+
 gateway:
   token:
     generate: true    # auto-generate gateway token Secret on install, retained on uninstall
