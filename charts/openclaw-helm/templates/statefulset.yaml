@@ -1,20 +1,19 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "openclaw-helm.fullname" . }}
   labels:
     {{- include "openclaw-helm.labels" . | nindent 4 }}
 spec:
+  serviceName: {{ include "openclaw-helm.fullname" . }}
   replicas: {{ .Values.replicas }}
-  {{- with .Values.strategy }}
-  strategy:
+  podManagementPolicy: OrderedReady
+  {{- with .Values.updateStrategy }}
+  updateStrategy:
     {{- toYaml . | nindent 4 }}
   {{- else }}
-  {{- /* strategy: {} or null falls through with-guard;
-         default to Recreate because RWO PVCs cause
-         Multi-Attach errors during RollingUpdate upgrades */ -}}
-  strategy:
-    type: Recreate
+  updateStrategy:
+    type: RollingUpdate
   {{- end }}
   selector:
     matchLabels:
@@ -70,7 +69,7 @@ spec:
           mountPath: /home/node/.openclaw
         - name: tmp
           mountPath: /tmp
-      
+
       - name: init-skills
         image: "{{ include "openclaw-helm.image" . }}"
         command:
@@ -212,11 +211,19 @@ spec:
       - name: bash-aliases
         configMap:
           name: {{ include "openclaw-helm.fullname" . }}
-      - name: data
-        persistentVolumeClaim:
-          claimName: {{ include "openclaw-helm.fullname" . }}
       - name: tmp
         emptyDir: {}
       {{- with .Values.extraVolumes }}
         {{- toYaml . | nindent 6 }}
       {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- if .Values.persistence.storageClass }}
+        storageClassName: {{ .Values.persistence.storageClass }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size }}

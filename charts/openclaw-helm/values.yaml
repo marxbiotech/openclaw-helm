@@ -6,12 +6,11 @@ image:
 
 replicas: 1
 
-# strategy controls the deployment update strategy
-# Recreate is required for RWO PVC (default on most cloud providers) to avoid
-# Multi-Attach errors during helm upgrade. Override to RollingUpdate only if
-# your StorageClass supports RWX (ReadWriteMany).
-strategy:
-  type: Recreate
+# updateStrategy controls the StatefulSet update strategy.
+# RollingUpdate (default) terminates the old pod before creating the new one,
+# which naturally avoids RWO Multi-Attach errors.
+updateStrategy:
+  type: RollingUpdate
 
 resources:
   limits:
