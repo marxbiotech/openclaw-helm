@@ -122,6 +122,9 @@ podSecurityContext: {}
 # podSecurityContext:
 #   fsGroup: 1000
 
+# extraInitContainers adds init containers after the built-in ones (init-config, init-skills, init-plugins)
+extraInitContainers: []
+
 # extraContainers adds sidecar containers to the pod
 extraContainers: []
 
