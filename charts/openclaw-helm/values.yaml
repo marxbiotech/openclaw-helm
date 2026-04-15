@@ -88,8 +88,6 @@ skills:
   - weather
   - gog
 
-plugins: []
-
 gateway:
   token:
     generate: true    # auto-generate gateway token Secret on install, retained on uninstall
@@ -122,7 +120,7 @@ podSecurityContext: {}
 # podSecurityContext:
 #   fsGroup: 1000
 
-# extraInitContainers adds init containers after the built-in ones (init-config, init-skills, init-plugins)
+# extraInitContainers adds init containers after the built-in ones (init-config, init-skills)
 extraInitContainers: []
 
 # extraContainers adds sidecar containers to the pod
